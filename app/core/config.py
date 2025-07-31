@@ -1,0 +1,50 @@
+from typing import List, Optional
+from pydantic_settings import BaseSettings
+from pydantic import Field
+import os
+
+
+class Settings(BaseSettings):
+    # Application
+    APP_NAME: str = "AI Image Generation with Trend Analysis"
+    VERSION: str = "1.0.0"
+    API_V1_STR: str = "/api/v1"
+    SECRET_KEY: str = Field(default="your-secret-key-here")
+    DEBUG: bool = Field(default=False)
+    
+    # Database
+    DATABASE_URL: str = Field(default="postgresql://user:password@localhost:5432/ai_image_gen")
+    
+    # Redis
+    REDIS_URL: str = Field(default="redis://localhost:6379/0")
+    CACHE_TTL: int = 3600  # 1 hour cache for trend data
+    
+    # CORS
+    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
+    
+    # API Keys
+    OPENAI_API_KEY: Optional[str] = None
+    GOOGLE_TRENDS_API_KEY: Optional[str] = None
+    TWITTER_API_KEY: Optional[str] = None
+    TWITTER_API_SECRET: Optional[str] = None
+    
+    # AWS S3
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
+    AWS_BUCKET_NAME: str = "ai-generated-images"
+    AWS_REGION: str = "us-east-1"
+    
+    # Image Generation Settings
+    MAX_IMAGES_PER_REQUEST: int = 3
+    IMAGE_GENERATION_TIMEOUT: int = 300  # 5 minutes
+    
+    # Celery
+    CELERY_BROKER_URL: str = Field(default="redis://localhost:6379/0")
+    CELERY_RESULT_BACKEND: str = Field(default="redis://localhost:6379/0")
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
+
+
+settings = Settings()

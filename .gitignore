@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python
 __pycache__/
 *.py[cod]
@@ -124,4 +125,6 @@ yarn-error.log*
 *.sw?
 
 # Optional - keep some files
+# Optional - keep some files
 !.gitkeep
+.env
