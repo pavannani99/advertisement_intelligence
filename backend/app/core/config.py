@@ -1,8 +1,6 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from pydantic_settings import BaseSettings
-from pydantic import Field
-import os
-
+from pydantic import Field, field_validator
 
 class Settings(BaseSettings):
     # Application
@@ -11,40 +9,47 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = Field(default="your-secret-key-here")
     DEBUG: bool = Field(default=False)
-    
+
     # Database
     DATABASE_URL: str = Field(default="postgresql://user:password@localhost:5432/ai_image_gen")
-    
+
     # Redis
     REDIS_URL: str = Field(default="redis://localhost:6379/0")
     CACHE_TTL: int = 3600  # 1 hour cache for trend data
-    
+
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:8000"]
-    
+
+    @field_validator("BACKEND_CORS_ORIGINS", mode='before')
+    @classmethod
+    def assemble_cors_origins(cls, v: Any) -> List[str] | str:
+        if isinstance(v, str) and not v.startswith('['):
+            return [i.strip() for i in v.split(',')]
+        return v
+
     # API Keys
     OPENAI_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
     GOOGLE_TRENDS_API_KEY: Optional[str] = None
     TWITTER_API_KEY: Optional[str] = None
     TWITTER_API_SECRET: Optional[str] = None
-    
+
     # AWS S3
     AWS_ACCESS_KEY_ID: Optional[str] = None
     AWS_SECRET_ACCESS_KEY: Optional[str] = None
     AWS_BUCKET_NAME: str = "ai-generated-images"
     AWS_REGION: str = "us-east-1"
-    
+
     # Image Generation Settings
     MAX_IMAGES_PER_REQUEST: int = 3
     IMAGE_GENERATION_TIMEOUT: int = 300  # 5 minutes
-    
+
     # Celery
     CELERY_BROKER_URL: str = Field(default="redis://localhost:6379/0")
     CELERY_RESULT_BACKEND: str = Field(default="redis://localhost:6379/0")
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = True
-
 
 settings = Settings()

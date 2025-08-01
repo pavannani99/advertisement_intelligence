@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
-from app.api.v1.endpoints import prompt, advertising
+from app.api.v1.endpoints import prompt, advertising, chat
 import os
 
 app = FastAPI(
@@ -28,6 +28,8 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # Include routers
 app.include_router(prompt.router, prefix=f"{settings.API_V1_STR}", tags=["prompt"])
 app.include_router(advertising.router, prefix=f"{settings.API_V1_STR}", tags=["advertising"])
+app.include_router(chat.router, prefix=f"{settings.API_V1_STR}", tags=["chat"])  
+
 
 
 @app.get("/")

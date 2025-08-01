@@ -1,4 +1,4 @@
-#!/Users/divyamkataria/Downloads/avdertisement_intellignce-main/backend/venv/bin/python
+#!/Users/divyamkataria/Downloads/avdertisement_intellignce-main/backend/venv/bin/python3.12
 
 import sys
 import json
