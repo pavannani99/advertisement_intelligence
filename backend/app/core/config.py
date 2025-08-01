@@ -1,3 +1,5 @@
+# backend/app/core/config.py
+
 from typing import List, Optional, Any
 from pydantic_settings import BaseSettings
 from pydantic import Field, field_validator
@@ -48,8 +50,9 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = Field(default="redis://localhost:6379/0")
     CELERY_RESULT_BACKEND: str = Field(default="redis://localhost:6379/0")
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    # REMOVED The inner Config class to allow for default behavior
+    # class Config:
+    #     env_file = ".env"
+    #     case_sensitive = True
 
 settings = Settings()

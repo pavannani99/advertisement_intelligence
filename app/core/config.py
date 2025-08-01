@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     
     # API Keys
     OPENAI_API_KEY: Optional[str] = None
+    GEMINI_API_KEY: Optional[str] = None
     GOOGLE_TRENDS_API_KEY: Optional[str] = None
     TWITTER_API_KEY: Optional[str] = None
     TWITTER_API_SECRET: Optional[str] = None
