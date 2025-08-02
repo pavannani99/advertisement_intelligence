@@ -4,6 +4,7 @@ from app.schemas import advertising_schemas as schemas
 from app.core import database
 from app.models import models
 from app.services import research_service, ad_generation_service
+from app.services.facebook_marketing_service import FacebookMarketingService, create_facebook_ad_from_generated_image
 import uuid
 import asyncio
 import json
@@ -275,3 +276,100 @@ async def check_ad_status(job_id: str, db: Session = Depends(database.get_db)):
         result=result,
         error=job.error_message
     )
+
+
+@router.post("/post-ad-to-meta")
+async def post_ad_to_meta(
+    payload: dict,
+    db: Session = Depends(database.get_db)
+):
+    """Post generated ad to Facebook/Meta Marketing API"""
+    try:
+        # Extract required fields from payload
+        session_id = payload.get("session_id")
+        ad_id = payload.get("ad_id")  # This is the generated image ID
+        
+        if not session_id or not ad_id:
+            raise HTTPException(
+                status_code=400, 
+                detail="session_id and ad_id are required"
+            )
+        
+        # Get session data
+        session = db.query(models.Session).filter(models.Session.id == session_id).first()
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        
+        # Get generated image data
+        image = db.query(models.GeneratedImage).filter(models.GeneratedImage.id == ad_id).first()
+        if not image:
+            raise HTTPException(status_code=404, detail="Generated image not found")
+        
+        # Parse session data for Facebook campaign
+        product_info = json.loads(session.refined_prompt) if session.refined_prompt else {}
+        research_data = json.loads(session.trend_data) if session.trend_data else {}
+        final_prompts = json.loads(session.final_prompts) if session.final_prompts else []
+        
+        # Find the idea associated with this image
+        idea_data = {}
+        for idea in final_prompts:
+            if idea.get("name", "") in image.prompt_used or idea.get("theme", "") in image.prompt_used:
+                idea_data = idea
+                break
+        
+        # Prepare session data for Facebook API
+        session_data = {
+            "session_id": session_id,
+            "company_name": product_info.get("company_name", "Unknown Company"),
+            "idea_name": idea_data.get("name", "Generated Ad"),
+            "idea_description": idea_data.get("description", "AI Generated Advertisement"),
+            "target_demographic": product_info.get("target_demographic", "General"),
+            "text": idea_data.get("text", "Check out our amazing offer!"),
+            "daily_budget": payload.get("daily_budget", 1000)  # Default $10
+        }
+        
+        # Get the image file path (assuming it's stored locally)
+        # You may need to adjust this based on your actual image storage
+        import os
+        from urllib.parse import urlparse
+        
+        # Extract filename from URL and construct local path
+        url_path = urlparse(image.image_url).path
+        filename = os.path.basename(url_path)
+        image_path = os.path.join("static", "generated", filename)
+        
+        # Check if image file exists
+        if not os.path.exists(image_path):
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Image file not found at {image_path}"
+            )
+        
+        # Create Facebook ad campaign
+        result = create_facebook_ad_from_generated_image(image_path, session_data)
+        
+        if result["success"]:
+            # Optionally store Facebook campaign data in database
+            # You could add fields to your models to track Facebook campaign IDs
+            return {
+                "success": True,
+                "message": result["message"],
+                "facebook_campaign_id": result.get("campaign_id"),
+                "facebook_ad_id": result.get("ad_id"),
+                "facebook_creative_id": result.get("creative_id")
+            }
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to create Facebook ad: {result.get('error', 'Unknown error')}"
+            )
+            
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        # Handle unexpected errors
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error: {str(e)}"
+        )

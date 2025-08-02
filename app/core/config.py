@@ -29,6 +29,14 @@ class Settings(BaseSettings):
     TWITTER_API_KEY: Optional[str] = None
     TWITTER_API_SECRET: Optional[str] = None
     
+    # Facebook Marketing API
+    META_APP_ID: Optional[str] = None
+    META_APP_SECRET: Optional[str] = None
+    META_API_ENVIRONMENT: str = Field(default="sandbox")  # sandbox or production
+    META_SANDBOX_AD_ACCOUNT_ID: Optional[str] = None
+    META_SANDBOX_PAGE_ID: Optional[str] = None
+    META_ACCESS_TOKEN: Optional[str] = None
+    
     # AWS S3
     AWS_ACCESS_KEY_ID: Optional[str] = None
     AWS_SECRET_ACCESS_KEY: Optional[str] = None

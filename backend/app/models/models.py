@@ -25,6 +25,8 @@ class Session(Base):
     final_prompts = Column(Text)  # Store as JSON string for SQLite compatibility
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    meta_access_token = Column(Text, nullable=True)
+
     
     @property
     def extracted_keywords_json(self):

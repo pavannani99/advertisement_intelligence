@@ -35,6 +35,18 @@ class Settings(BaseSettings):
     GOOGLE_TRENDS_API_KEY: Optional[str] = None
     TWITTER_API_KEY: Optional[str] = None
     TWITTER_API_SECRET: Optional[str] = None
+    
+    META_APP_ID: Optional[str] = None
+    META_APP_SECRET: Optional[str] = None
+
+    # New lines for Sandbox and Production switching
+    META_API_ENVIRONMENT: str = "sandbox"  # Default to sandbox for safety
+    META_SANDBOX_AD_ACCOUNT_ID: Optional[str] = None
+    META_SANDBOX_PAGE_ID: Optional[str] = None
+
+    # You might need these later for production
+    META_PRODUCTION_AD_ACCOUNT_ID: Optional[str] = None
+    META_PRODUCTION_PAGE_ID: Optional[str] = None
 
     # AWS S3
     AWS_ACCESS_KEY_ID: Optional[str] = None

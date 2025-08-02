@@ -8,6 +8,8 @@ import uuid
 import asyncio
 import json
 from datetime import datetime
+from app.services import meta_ads_service
+
 
 
 async def simulate_image_generation(job_ids: list):
@@ -275,3 +277,44 @@ async def check_ad_status(job_id: str, db: Session = Depends(database.get_db)):
         result=result,
         error=job.error_message
     )
+
+@router.post("/post-ad-to-meta", response_model=...)
+async def post_ad_to_meta(
+    payload: ..., # Create a Pydantic model for this payload
+    db: Session = Depends(database.get_db)
+):
+    """
+    Posts a generated image as an ad to the Meta Ads platform.
+    """
+    # 1. Get user's access token (you'll need to store this in the DB)
+    user_access_token = "..." # Get from DB
+
+    # 2. Initialize the Meta Ads API
+    meta_ads_service.init_meta_api(user_access_token)
+
+    # 3. Create the campaign, ad set, creative, and ad
+    try:
+        campaign = meta_ads_service.create_ad_campaign(
+            ad_account_id=payload.ad_account_id,
+            campaign_name="AI Generated Campaign"
+        )
+        ad_set = meta_ads_service.create_ad_set(
+            ad_account_id=payload.ad_account_id,
+            campaign_id=campaign['id'],
+            ad_set_name="AI Generated Ad Set"
+        )
+        creative = meta_ads_service.create_ad_creative(
+            ad_account_id=payload.ad_account_id,
+            image_path=payload.image_path, # Path to the generated image
+            page_id=payload.page_id,
+            message=payload.message
+        )
+        ad = meta_ads_service.create_ad(
+            ad_account_id=payload.ad_account_id,
+            ad_set_id=ad_set['id'],
+            creative_id=creative['id'],
+            ad_name="AI Generated Ad"
+        )
+        return {"message": "Ad created successfully!", "ad_id": ad['id']}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
