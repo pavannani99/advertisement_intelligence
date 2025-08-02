@@ -127,4 +127,4 @@ yarn-error.log*
 # Optional - keep some files
 # Optional - keep some files
 !.gitkeep
-.env
+.env*.zip
