@@ -128,3 +128,4 @@ yarn-error.log*
 # Optional - keep some files
 !.gitkeep
 .env*.zip
+ADVAI.zip
