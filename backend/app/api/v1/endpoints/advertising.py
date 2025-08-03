@@ -115,7 +115,7 @@ async def conduct_research(
     payload: schemas.ResearchRequest,
     db: Session = Depends(database.get_db)
 ):
-    """Step 2: Research trends and gather insights"""
+    """Step 2: Research trends and gather insights - RESEARCH DISABLED AS REQUESTED"""
     # Get session
     session = db.query(models.Session).filter(models.Session.id == payload.session_id).first()
     if not session:
@@ -124,11 +124,23 @@ async def conduct_research(
     # Parse JSON string back to dict
     product_info = json.loads(session.refined_prompt) if session.refined_prompt else {}
     
-    # Conduct research
-    research_data = await research_service.conduct_comprehensive_research(
-        product_info=product_info,
-        website_url=str(payload.company_website) if payload.company_website else None
-    )
+    # Skip actual research, use mock data instead
+    research_data = {
+        "market_trends": {
+            "category_trends": [f"{product_info.get('product_type', 'product')} trends"],
+            "style_trends": ["modern", "minimalist", "bold", "elegant"]
+        },
+        "competitor_analysis": {
+            "common_themes": ["quality", "innovation", "trust"]
+        },
+        "website_data": {
+            "title": "Research Disabled",
+            "description": "Website scraping disabled as requested"
+        },
+        "research_timestamp": datetime.utcnow().isoformat(),
+        "product_info": product_info,
+        "status": "research_disabled"
+    }
     
     # Store research data as JSON string
     session.trend_data = json.dumps(research_data)

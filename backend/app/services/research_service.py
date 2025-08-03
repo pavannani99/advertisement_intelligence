@@ -19,30 +19,15 @@ if settings.OPENAI_API_KEY:
 
 
 async def scrape_website_data(website_url: str) -> Dict[str, Any]:
-    """Scrape company website for insights"""
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(website_url, timeout=10.0)
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Extract basic information
-            title = soup.find('title')
-            meta_description = soup.find('meta', attrs={'name': 'description'})
-            
-            # Extract text content (limit to avoid too much data)
-            text_content = soup.get_text()[:2000]
-            
-            return {
-                "title": title.text if title else "",
-                "description": meta_description.get('content') if meta_description else "",
-                "content_sample": text_content,
-                "scraped_at": datetime.utcnow().isoformat()
-            }
-    except Exception as e:
-        return {
-            "error": f"Failed to scrape website: {str(e)}",
-            "scraped_at": datetime.utcnow().isoformat()
-        }
+    """Scrape company website for insights - DISABLED AS REQUESTED"""
+    # Scraping functionality disabled as per user request
+    return {
+        "title": "Website Analysis Disabled",
+        "description": "Website scraping has been disabled as requested",
+        "content_sample": "No website content analyzed",
+        "scraped_at": datetime.utcnow().isoformat(),
+        "status": "disabled"
+    }
 
 
 async def analyze_market_trends(product_info: Dict[str, Any]) -> Dict[str, Any]:

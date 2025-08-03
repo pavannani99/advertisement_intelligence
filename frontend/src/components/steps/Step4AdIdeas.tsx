@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Lightbulb, ArrowRight, ArrowLeft, Loader2, Settings, CheckCircle } from 'lucide-react';
 import { WizardData } from '../AdGenerationWizard';
-import { apiService, AdIdea, AdCustomizationOptions, GenerateIdeasRequest } from '../../services/api';
+import { apiService, AdCustomizationOptions, GenerateIdeasRequest } from '../../services/api';
+import { AdIdea } from '../../types';
 
 interface Step4Props {
   data: WizardData;

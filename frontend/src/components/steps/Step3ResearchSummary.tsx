@@ -42,7 +42,18 @@ const Step3ResearchSummary: React.FC<Step3Props> = ({ data, onNext, onPrev }) =>
     );
   }
 
-  const summary = researchData.summary;
+  const summary = researchData?.summary;
+
+  if (!summary) {
+    return (
+      <div className="animate-fade-in text-center py-12">
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Research Summary Not Available</h3>
+        <p className="text-gray-600">
+          Please ensure research data is populated correctly.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in">

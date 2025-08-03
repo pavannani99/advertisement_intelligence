@@ -1,20 +1,27 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import AdGenerationWizard from './components/AdGenerationWizard';
-import Header from './components/Header';
+import { SessionProvider } from './contexts/SessionContext';
+import { UIProvider } from './contexts/UIContext';
+import AppShell from './components/AppShell';
+import LandingPage from './pages/LandingPage';
+import CampaignDashboard from './pages/CampaignDashboard';
+import AdResultsPage from './pages/AdResultsPage';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<AdGenerationWizard />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <UIProvider>
+      <SessionProvider>
+        <Router>
+          <AppShell>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/dashboard" element={<CampaignDashboard />} />
+              <Route path="/results/:campaignId" element={<AdResultsPage />} />
+            </Routes>
+          </AppShell>
+        </Router>
+      </SessionProvider>
+    </UIProvider>
   );
 }
 

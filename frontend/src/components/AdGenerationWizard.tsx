@@ -5,7 +5,8 @@ import Step2Research from './steps/Step2Research';
 import Step3ResearchSummary from './steps/Step3ResearchSummary';
 import Step4AdIdeas from './steps/Step4AdIdeas';
 import Step5AdGeneration from './steps/Step5AdGeneration';
-import { ProductInfoRequest, ResearchResponse, AdIdea } from '../services/api';
+import { ProductInfoRequest } from '../services/api';
+import { ResearchResponse, AdIdea } from '../types';
 
 export interface WizardData {
   sessionId?: string;

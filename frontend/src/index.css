@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Using system SF Pro Display font - no import needed */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,37 +7,41 @@
   box-sizing: border-box;
 }
 
+html {
+  /* Enable dark mode by default */
+  color-scheme: dark;
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
+  background-color: #0f0f23;
+  color: #e2e8f0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: 'Courier New', 'Source Code Pro', Menlo, Monaco, Consolas,
     monospace;
+  @apply text-accent-cyan;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Dark theme */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  @apply bg-dark-surface;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 10px;
+  @apply bg-dark-border rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  @apply bg-accent-cyan/30;
 }
 
 /* Loading animation */
@@ -51,31 +55,177 @@ code {
   animation: spin 1s linear infinite;
 }
 
-/* Fade in animation */
-@keyframes fadeIn {
+/* Warp-style terminal cursor */
+.terminal-cursor {
+  @apply inline-block w-0.5 h-5 bg-accent-cyan animate-typing ml-1;
+}
+
+/* Skeleton loading animation */
+@keyframes skeleton {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1a1d29 25%, #2a2d3a 50%, #1a1d29 75%);
+  background-size: 200px 100%;
+  animation: skeleton 1.5s infinite;
+}
+
+/* Toast slide animation */
+@keyframes slideInFromTop {
   from {
+    transform: translateX(100%);
     opacity: 0;
-    transform: translateY(10px);
   }
   to {
+    transform: translateX(0);
     opacity: 1;
-    transform: translateY(0);
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+@keyframes slideOutToTop {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
-/* Button hover effects */
-.btn-primary {
-  @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+.toast-enter {
+  animation: slideInFromTop 0.3s ease-out;
 }
 
-.btn-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+.toast-exit {
+  animation: slideOutToTop 0.3s ease-in;
 }
 
-.card {
-  @apply bg-white rounded-lg shadow-card hover:shadow-card-hover transition-shadow duration-200;
+/* Component styles */
+@layer components {
+  /* Warp-style input */
+  .warp-input {
+    @apply w-full bg-dark-surface border-2 border-dark-border rounded-2xl px-6 py-4 text-lg;
+    @apply text-dark-text-primary placeholder-dark-text-muted;
+    @apply focus:border-accent-cyan focus:shadow-glow-sm focus:outline-none;
+    @apply transition-all duration-300;
+  }
+
+  .warp-input:focus {
+    @apply animate-pulse-glow;
+  }
+  
+  /* Button styles */
+  .btn-primary {
+    @apply bg-accent-cyan hover:bg-accent-cyan/80 text-dark-bg font-medium;
+    @apply py-3 px-6 rounded-2xl transition-all duration-200;
+    @apply shadow-lg hover:shadow-glow-sm transform hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-surface hover:bg-dark-border text-dark-text-secondary;
+    @apply font-medium py-3 px-6 rounded-2xl transition-all duration-200;
+    @apply border border-dark-border hover:border-accent-cyan/50;
+  }
+
+  .btn-ghost {
+    @apply text-dark-text-secondary hover:text-accent-cyan;
+    @apply font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply hover:bg-dark-surface;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-dark-surface rounded-2xl shadow-dark border border-dark-border;
+    @apply hover:border-accent-cyan/30 transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply hover:shadow-glow transform hover:scale-[1.02] hover:-translate-y-1;
+  }
+
+  /* Campaign card specific */
+  .campaign-card {
+    @apply card card-hover p-6 cursor-pointer;
+    @apply relative overflow-hidden;
+  }
+
+  .campaign-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-r from-accent-cyan/5 to-accent-purple/5;
+    @apply opacity-0 transition-opacity duration-300;
+  }
+
+  .campaign-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Status badges */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .status-pending {
+    @apply bg-status-warning/20 text-status-warning border border-status-warning/30;
+  }
+
+  .status-processing {
+    @apply bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/30;
+  }
+
+  .status-completed {
+    @apply bg-status-success/20 text-status-success border border-status-success/30;
+  }
+
+  .status-failed {
+    @apply bg-status-error/20 text-status-error border border-status-error/30;
+  }
+
+  /* Image gallery */
+  .image-card {
+    @apply card p-4 relative;
+    @apply transform transition-all duration-300;
+  }
+  
+  .image-card:hover {
+    @apply scale-105;
+  }
+
+  .image-card:hover {
+    @apply scale-105 shadow-glow;
+  }
+
+  .image-overlay {
+    @apply absolute inset-0 bg-dark-bg/80 rounded-2xl;
+    @apply flex items-center justify-center opacity-0;
+    @apply group-hover:opacity-100 transition-opacity duration-300;
+  }
+
+  /* Toast styles */
+  .toast {
+    @apply card p-4 max-w-sm mx-4 mb-4;
+    @apply flex items-center space-x-3;
+  }
+
+  .toast-success {
+    @apply border-status-success/30 bg-status-success/10;
+  }
+
+  .toast-error {
+    @apply border-status-error/30 bg-status-error/10;
+  }
+
+  .toast-info {
+    @apply border-accent-cyan/30 bg-accent-cyan/10;
+  }
+
+  .toast-warning {
+    @apply border-status-warning/30 bg-status-warning/10;
+  }
 }

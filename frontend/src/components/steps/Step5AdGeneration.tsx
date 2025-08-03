@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Image, Loader2, ArrowLeft, Download, Check, RefreshCw, Edit3 } from 'lucide-react';
 import { WizardData } from '../AdGenerationWizard';
-import { apiService, GenerateAdsRequest, AdIdea, GenerateAdsResponse, AdGenerationStatus, GeneratedAd } from '../../services/api';
+import { apiService, GenerateAdsRequest, GenerateAdsResponse, AdGenerationStatus } from '../../services/api';
+import { AdIdea, GeneratedAd } from '../../types';
 
 interface Step5Props {
   data: WizardData;
@@ -110,9 +111,9 @@ const Step5AdGeneration: React.FC<Step5Props> = ({ data, onPrev, isLoading, setI
                   </div>
                   {generationStatus[jobId].result?.thumbnail_url && (
                     <img 
-                      src={generationStatus[jobId].result!.thumbnail_url.startsWith('http') 
-                        ? generationStatus[jobId].result!.thumbnail_url 
-                        : `http://localhost:8000${generationStatus[jobId].result!.thumbnail_url}`} 
+                      src={generationStatus[jobId].result?.thumbnail_url?.startsWith('http') 
+                        ? generationStatus[jobId].result?.thumbnail_url 
+                        : `http://localhost:8000${generationStatus[jobId].result?.thumbnail_url}`}
                       alt="Ad Thumbnail" 
                       className="w-full h-auto mb-2 cursor-pointer rounded-lg shadow-md" 
                       onClick={() => handleSelectImage(generationStatus[jobId].result)} 
