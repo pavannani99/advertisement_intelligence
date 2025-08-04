@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-terminal-border;
+  }
+
+  body {
+    @apply bg-terminal-bg text-terminal-fg;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-terminal-bg;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-terminal-border hover:bg-terminal-muted;
+  }
+
+  /* Selection */
+  ::selection {
+    @apply bg-terminal-fg text-terminal-bg;
+  }
+
+  /* Focus styles */
+  *:focus {
+    @apply outline-none;
+  }
+
+  /* Input styles */
+  input, textarea {
+    @apply bg-transparent;
+  }
+}
+
+@layer components {
+  .terminal-input {
+    @apply bg-transparent border border-terminal-border rounded px-3 py-2 
+           focus:border-terminal-fg transition-colors duration-200
+           placeholder:text-terminal-muted;
+  }
+
+  .terminal-button {
+    @apply bg-terminal-bg border border-terminal-border rounded px-4 py-2
+           hover:bg-terminal-hover active:bg-terminal-active
+           transition-colors duration-200 cursor-pointer
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .terminal-button-primary {
+    @apply bg-terminal-fg text-terminal-bg border-terminal-fg
+           hover:bg-terminal-muted hover:border-terminal-muted;
+  }
+
+  .terminal-card {
+    @apply bg-terminal-bg border border-terminal-border rounded p-4;
+  }
+
+  .terminal-divider {
+    @apply border-t border-terminal-border;
+  }
+
+  .typing-effect {
+    @apply overflow-hidden whitespace-nowrap;
+  }
+
+  .cursor::after {
+    content: '▌';
+    @apply inline-block animate-cursor-blink text-terminal-fg;
+  }
+
+  .code-block {
+    @apply bg-terminal-hover border border-terminal-border rounded p-4 
+           font-mono text-sm overflow-x-auto;
+  }
+
+  .message-bubble {
+    @apply max-w-[80%] p-3 rounded;
+  }
+
+  .message-user {
+    @apply bg-terminal-hover border border-terminal-border ml-auto;
+  }
+
+  .message-assistant {
+    @apply bg-transparent border border-terminal-border;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .glow {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+
+  .glow-strong {
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+  }
+}
